@@ -22,14 +22,6 @@ descriptive_stats = groups['growth'].agg(['mean', 'std', 'count']).reset_index()
 print("Descriptive statistics for each group:")
 print(descriptive_stats, "\n")
 
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Load the dataset
-file_path = 'blood_serum.csv'
-data = pd.read_csv(file_path)
-
 # Set Seaborn style for better aesthetics
 sns.set(style="whitegrid")
 
@@ -81,7 +73,6 @@ plt.close(fig)  # Close the plot
 # Step 3: Statistical Testing
 print("Step 3: Statistical Testing\n")
 
-# Normality Testing (Shapiro-Wilk)
 # Normality Check for LNCaP before and after exposure
 for serum_condition in ['before', 'after']:
     group = data[(data['cell'] == 'LNCaP') & (data['serum'] == serum_condition)]['growth']
@@ -101,25 +92,6 @@ for serum_condition in ['before', 'after']:
     plt.tight_layout()
     plt.savefig(f'NIH3T3_{serum_condition}_qq_plot.png')
     plt.close(fig)
-
-# Paired t-tests
-print("Conducting paired t-tests...\n")
-lncap_before = data[(data['cell'] == 'LNCaP') & (data['serum'] == 'before')]['growth']
-lncap_after = data[(data['cell'] == 'LNCaP') & (data['serum'] == 'after')]['growth']
-nih3t3_before = data[(data['cell'] == 'NIH3T3') & (data['serum'] == 'before')]['growth']
-nih3t3_after = data[(data['cell'] == 'NIH3T3') & (data['serum'] == 'after')]['growth']
-
-lncap_ttest = ttest_rel(lncap_before, lncap_after)
-nih3t3_ttest = ttest_rel(nih3t3_before, nih3t3_after)
-print(f"LNCaP: t-statistic = {lncap_ttest.statistic:.4f}, p-value = {lncap_ttest.pvalue:.4f}")
-print(f"NIH3T3: t-statistic = {nih3t3_ttest.statistic:.4f}, p-value = {nih3t3_ttest.pvalue:.4f}\n")
-
-# Step 4: Summary of Findings
-print("\nSummary of Findings:")
-print("- Descriptive statistics reveal trends in growth rates.")
-print("- KDE plots show smooth, continuous distributions for each serum condition and cell type.")
-print("- Paired t-tests examine pre- and post-treatment growth within each cell type.")
-print("- Statistical assumptions are validated with normality tests.")
 
 # Save summary statistics to a file
 descriptive_stats.to_csv('descriptive_statistics.csv', index=False)
